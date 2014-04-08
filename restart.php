@@ -1,4 +1,4 @@
 <?php
 
-	include("bot.php");
+	include("main.php");
 ?>
