@@ -1,6 +1,8 @@
 <?php
 
 	//irc settings
+	//main nick first and then others are used if nicks are already in use
+	//goes down the line untill one works
 	$nick = array('evasiveBot', 'evasive_Bot', 'evasiveBOT', 'evasiveB0T', 'evasive807');
 	$nickNo = 0;
 
@@ -663,8 +665,6 @@
 				$content = $content->nodeValue;
 
 				//parse through $content to get the first two sentences in the html code.
-
-
 				break;
 
 			
