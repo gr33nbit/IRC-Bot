@@ -61,6 +61,7 @@
 			$curl = curl_init($url);
 
 			curl_setopt_array($curl, array(
+				CURLOPT_SSL_VERIFYPEER => FALSE,
 				CURLOPT_RETURNTRANSFER => 1,
 				CURLOPT_USERAGENT => 'IRC weather bot function',
 				CURLOPT_FOLLOWLOCATION => TRUE

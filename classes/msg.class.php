@@ -149,28 +149,44 @@
 								$this->commands->commands($message);
 
 							//has a link
-							}else if($position = ((strpos($message, 'http://') !== false)||((strpos($message, "https://") !== false)))){
+							}else if(strpos($message, 'http://') !== false ||(strpos($message, "https://") !== false)){
 
+								if(strpos($message, 'http://') !== false){
+
+									$position = strpos($message, 'http://');
+
+								}else{
+
+									$position = strpos($message, 'https://');
+
+								}
 								$url = '';
 
-								while($message[$position] != ' ' && $position != strlen($message)){
+								while($message[$position] != ' ' && $position != strlen($message) && ctype_graph($message[$position]) != FALSE){
 
-									$url .= $message[$position++];
+										$url .= $message[$position++];
+									
 								}
-
+								echo $url;
 								$html = $this->misc->getUrl($url);
 								$title = '';
 
-								if(($position = strpos($html, '<title>') + strlen('<title>')) !== FALSE){
+								if(($position = strpos($html, '<title>')) !== FALSE){
 
+									$position += strlen('<title>');
 									while($html[$position] != '<' && $position <= strlen($html)){
 
+										echo $html[$position];
 										$title .= $html[$position++];
+
 
 									}
 								}
+								if($title != ''){
+									
+									$this->sendMsg('Title - \''.$title.'\'' , 1);
 
-								$this->sendMsg('Title - \''.$title.'\'' , 1);
+								}
 							}
 
 						//This is a server message
