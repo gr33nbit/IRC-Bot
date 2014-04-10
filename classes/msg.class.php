@@ -50,7 +50,7 @@
 
 			//send a 
 			if($other != null){
-				
+
 				$msg2 = $msg;
 				$msg = 'PRIVMSG '. $other . ' :';
 				$msg .= $msg2;
@@ -172,20 +172,18 @@
 									
 								}
 								
-								if(stripos($url, '.jpg') === FALSE || stripos($url, '.png') === FALSE || stripos($url, '.gif') === FALSE || stripos($url, '.svg') === FALSE){
-
 									$url2 = $url;
 
-									$url2 = str_replace('http://', '', $url);
-									$url2 = str_replace('https://', '' , $url);
+									$url2 = str_replace('http://', '', $url2);
+									$url2 = str_replace('https://', '' , $url2);
 
 									if(strpos($url2, '/') !== FALSE){
 
-										$url2 = explode('/', $url2, 2);								
-
-										if(strpos($url2[1], '.') !== FALSE){
+										$url2 = explode('.', $url2, 2);								
 
 										
+										if(strpos($url2[1], '.') !== FALSE){
+											
 											$url2 = explode('.', $url2[1]);
 
 											$count = count($url2);
@@ -215,6 +213,8 @@
 
 									
 									if($continue == true){
+										$url;
+
 										$html = $this->misc->getUrl($url);
 										$title = '';
 
@@ -236,7 +236,7 @@
 										}
 									}
 
-								}
+								
 
 								
 							}
