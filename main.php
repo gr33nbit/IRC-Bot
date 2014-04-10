@@ -70,8 +70,8 @@
 
 					$buff = $msg->getMsg();
 
-					$nickMsg = 'NICK '. $nick[0]. "\r\n";
-					$userMsg = 'USER ' . $nick[0].' 0 * :Fun Bot' . "\r\n";
+					$nickMsg = 'NICK '. $nick[0];
+					$userMsg = 'USER ' . $nick[0].' 0 * :Fun Bot';
 
 					$msg->sendMsg($nickMsg);
 					$msg->sendMsg($userMsg);

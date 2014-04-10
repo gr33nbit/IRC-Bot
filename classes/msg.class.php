@@ -45,12 +45,12 @@
 		}
 
 		public function sendMsg($msg, $channel = 0, $other = null){
-
-			$msg .= "\r\n";
+			
+			$msg = preg_replace( '/[^[:print:]]/', '',$msg);
 
 			//send a 
 			if($other != null){
-
+				
 				$msg2 = $msg;
 				$msg = 'PRIVMSG '. $other . ' :';
 				$msg .= $msg2;
@@ -64,11 +64,13 @@
 
 			//send to user
 			} else if($channel == 2){
-
+				
 				$msg2 = $msg;
 				$msg = 'PRIVMSG '. $GLOBALS['username'] . ' :';
 				$msg .= $msg2;
 			}
+
+			$msg .= "\r\n";
 
 			if(socket_send($GLOBALS['sock'], $msg, strlen($msg), 0) !== false){	
 
@@ -151,6 +153,8 @@
 							//has a link
 							}else if(strpos($message, 'http://') !== false ||(strpos($message, "https://") !== false)){
 
+								$continue = true;
+
 								if(strpos($message, 'http://') !== false){
 
 									$position = strpos($message, 'http://');
@@ -170,25 +174,66 @@
 								
 								if(stripos($url, '.jpg') === FALSE || stripos($url, '.png') === FALSE || stripos($url, '.gif') === FALSE || stripos($url, '.svg') === FALSE){
 
+									$url2 = $url;
 
-									$html = $this->misc->getUrl($url);
-									$title = '';
+									$url2 = str_replace('http://', '', $url);
+									$url2 = str_replace('https://', '' , $url);
 
-									if(($position = strpos($html, '<title>')) !== FALSE){
+									if(strpos($url2, '/') !== FALSE){
 
-										$position += strlen('<title>');
-										while($html[$position] != '<' && $position <= strlen($html)){
+										$url2 = explode('/', $url2, 2);								
 
-											echo $html[$position];
-											$title .= $html[$position++];
+										if(strpos($url2[1], '.') !== FALSE){
 
+										
+											$url2 = explode('.', $url2[1]);
+
+											$count = count($url2);
+											
+											$url2 = $url2[$count - 1];
+											
+											switch($url2){
+
+												case 'html':
+												case 'xml':
+												case 'htm':
+												case 'php':
+												case 'asp':
+												case 'aspx':
+
+													$continue = true;
+													break;
+
+												default:
+
+													$continue = false;
+
+											}
+										}
+
+									}
+
+									
+									if($continue == true){
+										$html = $this->misc->getUrl($url);
+										$title = '';
+
+										if(($position = strpos($html, '<title>')) !== FALSE){
+
+											$position += strlen('<title>');
+											while($html[$position] != '<' && $position <= strlen($html)){
+
+												$html[$position];
+												$title .= $html[$position++];
+
+
+											}
+										}
+										if($title != ''){
+											
+											$this->sendMsg('Title - \''.$title.'\'' , 1);
 
 										}
-									}
-									if($title != ''){
-										
-										$this->sendMsg('Title - \''.$title.'\'' , 1);
-
 									}
 
 								}
