@@ -167,26 +167,33 @@
 										$url .= $message[$position++];
 									
 								}
-								echo $url;
-								$html = $this->misc->getUrl($url);
-								$title = '';
+								
+								if(stripos($url, '.jpg') === FALSE || stripos($url, '.png') === FALSE || stripos($url, '.gif') === FALSE || stripos($url, '.svg') === FALSE){
 
-								if(($position = strpos($html, '<title>')) !== FALSE){
 
-									$position += strlen('<title>');
-									while($html[$position] != '<' && $position <= strlen($html)){
+									$html = $this->misc->getUrl($url);
+									$title = '';
 
-										echo $html[$position];
-										$title .= $html[$position++];
+									if(($position = strpos($html, '<title>')) !== FALSE){
 
+										$position += strlen('<title>');
+										while($html[$position] != '<' && $position <= strlen($html)){
+
+											echo $html[$position];
+											$title .= $html[$position++];
+
+
+										}
+									}
+									if($title != ''){
+										
+										$this->sendMsg('Title - \''.$title.'\'' , 1);
 
 									}
-								}
-								if($title != ''){
-									
-									$this->sendMsg('Title - \''.$title.'\'' , 1);
 
 								}
+
+								
 							}
 
 						//This is a server message
