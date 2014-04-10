@@ -168,7 +168,7 @@
 
 								while($message[$position] != ' ' && $position != strlen($message) && ctype_graph($message[$position]) != FALSE){
 
-										$url .= $message[$position++];
+									$url .= $message[$position++];
 									
 								}
 								
@@ -179,16 +179,20 @@
 
 									if(strpos($url2, '/') !== FALSE){
 
-										$url2 = explode('.', $url2, 2);								
-
-										
-										if(strpos($url2[1], '.') !== FALSE){
-											
-											$url2 = explode('.', $url2[1]);
+										$url2 = explode('/', $url2);								
 
 											$count = count($url2);
+
+											var_dump($url2);
+											echo strpos($url2[1], '.') . PHP_EOL;
+
+										if(strpos($url2[$count - 1], '.') !== FALSE){
 											
-											$url2 = $url2[$count - 1];
+											$url2 = explode('.', $url2[1]);
+											var_dump($url2);
+											$count = count($url2);
+											
+											echo $url2 = $url2[$count - 1] . '--- node 32 ---';
 											
 											switch($url2){
 
@@ -205,10 +209,8 @@
 												default:
 
 													$continue = false;
-
 											}
 										}
-
 									}
 
 									
