@@ -29,6 +29,7 @@
 	//username of message sender
 	$username = '';
 	$channel = '#gr33n-bot';
+	$sentFrom = '';
 	$commandPrefix = '!';
 
 	$channelsJoined = array();

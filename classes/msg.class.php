@@ -68,6 +68,12 @@
 				$msg2 = $msg;
 				$msg = 'PRIVMSG '. $GLOBALS['username'] . ' :';
 				$msg .= $msg2;
+
+			} else if($channel == 3){
+
+				$msg2 = $msg;
+				$msg = 'PRIVMSG '. $GLOBALS['sentFrom'] . ' :';
+				$msg .= $msg2;
 			}
 
 			$msg .= "\r\n";
@@ -127,6 +133,9 @@
 							$GLOBALS['username'] = explode('!', $msgMeta[0]);
 							$GLOBALS['username'] = $GLOBALS['username'][0];
 
+							//used to send message to source of incomming message
+							$GLOBALS['sentFrom'] = $GLOBALS['username'];
+
 							//message is from channel
 							if($msgMeta[2][0] == '#'){
 
@@ -134,6 +143,9 @@
 								
 								//change channel to respond to
 								$GLOBALS['channel'] = $msgMeta[2];
+
+								//
+								$GLOBALS['sentFrom'] = $GLOBALS['channel'];
 
 							//private message from user
 							}else{
@@ -177,22 +189,25 @@
 									$url2 = str_replace('http://', '', $url2);
 									$url2 = str_replace('https://', '' , $url2);
 
+									$baseUrl = '';
+
 									if(strpos($url2, '/') !== FALSE){
 
 										$url2 = explode('/', $url2);								
 
-											$count = count($url2);
+										$count = count($url2) - 1;
 
-											var_dump($url2);
-											echo strpos($url2[1], '.') . PHP_EOL;
+										$baseUrl = $url2[0];
 
-										if(strpos($url2[$count - 1], '.') !== FALSE){
+										var_dump($url2);
+
+										if(strpos($url2[$count], '.') !== FALSE){
 											
 											$url2 = explode('.', $url2[1]);
 											var_dump($url2);
-											$count = count($url2);
+											$count = count($url2) - 1;
 											
-											echo $url2 = $url2[$count - 1] . '--- node 32 ---';
+											$url2 = $url2[$count];
 											
 											switch($url2){
 
@@ -213,7 +228,6 @@
 										}
 									}
 
-									
 									if($continue == true){
 										$url;
 
@@ -233,14 +247,12 @@
 										}
 										if($title != ''){
 											
-											$this->sendMsg('Title - \''.$title.'\'' , 1);
+											$title = trim($title);
+
+											$this->sendMsg('\' '.$title.' \'' , 1);
 
 										}
 									}
-
-								
-
-								
 							}
 
 						//This is a server message

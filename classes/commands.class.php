@@ -59,9 +59,16 @@
 			//JOIN CHANNEL
 			case 'join':
 
-				$options = $this->misc->getOptions($command[1], 1);
+				if($this->misc->checkWhitelist()){
+					
+					$options = $this->misc->getOptions($command[1], 1);
 
-				$this->msg->sendMsg('JOIN '. $options[0]);
+					$this->msg->sendMsg('JOIN '. $options[0]);
+
+				} else{
+
+					$this->msg->sendMsg('You are not authorized', 2);
+				}
 
 				break;
 
@@ -291,32 +298,119 @@
 
 				break;
 
+			//reversePolish calculator
 			case 'reversePolish':
 
 				$options = $this->misc->getOptions($command[1], '*');
 
 				break;
 
+			//search wikipedia for a phrase or word
 			case 'wiki':
 
-				$url = 'http://en.wikipedia.org/wiki/' . $options;
+				$sentence = '';
 
+				//retrieve the HTML
+				$url = 'http://en.wikipedia.org/wiki/' . $command[1];
 				$html = $this->misc->getUrl($url);
 
+				//load the html into a html parser
 				$dom = new DOMDocument;
 				$dom->loadHTML($html);
 
-				$title = $dom->getElementById('fistHeading');
+				//get title
+				$title = $dom->getElementById('firstHeading');
 				$title = $title->nodeValue;
+				$title = str_replace(' ', '_', $title);
 
 				$content = $dom->getElementById('mw-content-text');
 				$content = $content->nodeValue;
 
-				//parse through $content to get the first two sentences in the html code.
+				
+				//the search did not find the right results
+				if(strpos($content, 'Wikipedia does not have an article with this exact name.') == FALSE){
+
+					//more than one result
+					if(strpos($content, 'may refer to either one of these things:') == FALSE && strpos($content, 'can refer to:') == FALSE  && 	strpos($content, 'may refer to:') == FALSE && strpos($title, '(disambiguation)') == FALSE){
+						//
+						//ARTICLE WAS FOUND
+						//
+						$content = $dom->getElementsByTagName('p');
+
+						if($content->length !== 0){
+
+							$contents = '';
+							//searching through each <p> tag
+							foreach($content as $cont){
+
+								//contents = the value of one of the <p> tags
+								$contents = $cont->nodeValue;
+
+								//if contents the first pargraph
+								if(strpos($contents, $title) !== FALSE){
+
+									break;
+
+								}
+							}
+
+							$fullStop = 0;
+							$count = 0;
+							$contentLen = strlen($contents);
+							//untill there has been 2 full stops (2 sentences)
+							//or until the end of the characters if its before 2 full stops
+							while($fullStop != 2 && $count <= $contentLen){
+
+								if($contents[$count] == '.'){
+
+									$fullStop++;
+								}
+
+								$sentence .= $contents[$count++];
+							}
+								
+							//link to the article
+							$this->msg->sendMsg('http://en.wikipedia.org/wiki/'.$title,1);
+							//send first couple of sentences
+							$this->msg->sendMsg($sentence, 1);	
+						}
+
+					} else{
+
+
+						$this->msg->sendMsg('more than one result found, refer to following link', 1);
+						$this->msg->sendMsg('http://en.wikipedia.org/wiki/'.$title, 1);
+
+					}
+
+				} else{
+
+					$this->msg->sendMsg('\''. $title .'\' was not found.', 1);
+				}
 				break;
 
+			case 'google':
+					$options = str_replace(' ', '+', $comand[1]);
+
+					$this->msg->sendMsg('https://google.com/search?q=' . $options, 3);
+				break;
+
+			case 'googleIt':
+
+					$options = str_replace(' ', '+', $command[1]);
+
+					$this->msg->sendMsg('http://letmegooglethat.com/?q='. $options, 3);
+
+				break;
 			
 			case 'help':
+
+					$this->msg->sendMsg('!wiki (query) - returns a link to the article found of (query) and a small synopsis.', 2);
+					$this->msg->sendMsg('!google (query) - returns link to a google search for (query)', 2);
+					$this->msg->sendMsg('!googleIt (query) - returns link to letmegooglethat.com to search for (query)', 2);
+					$this->msg->sendMsg('!weather (city) (country) - returns the temperature, conditions and humidity.', 2);
+					$this->msg->sendMsg('-- e.g !weather brisbane australia', 2);
+					$this->msg->sendMsg('-- e.g Temperature - 22 C, Conditions - cloudy, Humidity - 80%', 2);
 
 
 				break;
