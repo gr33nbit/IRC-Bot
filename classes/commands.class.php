@@ -390,7 +390,7 @@
 				break;
 
 			case 'google':
-					$options = str_replace(' ', '+', $comand[1]);
+					$options = str_replace(' ', '+', $command[1]);
 
 					$this->msg->sendMsg('https://google.com/search?q=' . $options, 3);
 				break;
