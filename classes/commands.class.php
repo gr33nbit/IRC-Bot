@@ -25,6 +25,20 @@
 
 		switch($command[0]){
 
+			case '?':
+
+				$options = explode($command[1]);
+				
+				$count = count($options);
+
+				$seed = srand(openssl_random_pseudo_bytes(16));
+				$location = $seed % $count;
+
+				$selected = $options[$location];
+
+				$this->msg->sendMsg("No. ".$location." - $selected");
+
+				break;
 			case 'shutdown':
 
 				if($this->misc->checkWhitelist()){
